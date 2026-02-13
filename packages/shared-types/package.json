@@ -1,0 +1,9 @@
+{
+  "name": "@life-os/shared-types",
+  "version": "0.1.0",
+  "description": "Shared TypeScript types for the Life OS platform",
+  "main": "types.ts",
+  "types": "types.ts",
+  "private": true,
+  "license": "ISC"
+}
