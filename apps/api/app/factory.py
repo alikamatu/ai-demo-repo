@@ -7,7 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.config import settings
 from app.core.database import engine, Base
-from app.routers import health, workflow_runs, workflow_steps
+from app.routers import health, workflow_runs, workflow_steps, orchestration, streams, approvals
 
 
 @asynccontextmanager
@@ -48,5 +48,8 @@ def create_app() -> FastAPI:
         prefix="/api/runs/{run_id}/steps",
         tags=["Workflow Steps"],
     )
+    app.include_router(orchestration.router, tags=["Orchestration"])
+    app.include_router(streams.router, tags=["Streams"])
+    app.include_router(approvals.router, tags=["Approvals"])
 
     return app
