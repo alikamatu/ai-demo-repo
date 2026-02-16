@@ -1,0 +1,110 @@
+@import "tailwindcss";
+
+:root {
+  --bg-main: #f6efe6;
+  --bg-panel: rgba(252, 245, 234, 0.84);
+  --bg-deep: #12263a;
+  --line: rgba(26, 42, 58, 0.18);
+  --line-strong: rgba(26, 42, 58, 0.35);
+  --text-main: #12263a;
+  --text-soft: #51657a;
+  --mint: #0ec5a4;
+  --amber: #ff9f1c;
+  --rose: #f25f5c;
+  --sky: #2c7be5;
+  --shadow: 0 20px 65px rgba(13, 31, 50, 0.12);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  min-height: 100%;
+  margin: 0;
+  background:
+    radial-gradient(circle at 12% 20%, rgba(14, 197, 164, 0.22), transparent 45%),
+    radial-gradient(circle at 78% 82%, rgba(44, 123, 229, 0.18), transparent 48%),
+    linear-gradient(140deg, #f9f3e7 0%, #f4ecdf 36%, #fef8ef 100%);
+  color: var(--text-main);
+  font-family: "Avenir Next", "Segoe UI", "Trebuchet MS", sans-serif;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: "Avenir Next Condensed", "Gill Sans", "Trebuchet MS", sans-serif;
+  letter-spacing: -0.02em;
+}
+
+.glass {
+  border: 1px solid var(--line);
+  background: linear-gradient(165deg, rgba(255, 255, 255, 0.8), var(--bg-panel));
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(10px);
+}
+
+.grid-fabric {
+  background-image:
+    linear-gradient(rgba(18, 38, 58, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(18, 38, 58, 0.08) 1px, transparent 1px);
+  background-size: 26px 26px;
+}
+
+.badge-chip {
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  padding: 0.25rem 0.7rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.gradient-text {
+  background: linear-gradient(96deg, #0b9a80 0%, #2c7be5 52%, #f25f5c 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.command-ring {
+  position: relative;
+}
+
+.command-ring::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  background: conic-gradient(from 200deg, rgba(14, 197, 164, 0.65), rgba(44, 123, 229, 0.45), rgba(242, 95, 92, 0.5), rgba(14, 197, 164, 0.65));
+  opacity: 0;
+  transition: opacity 180ms ease;
+  z-index: -1;
+}
+
+.command-ring:focus-within::after,
+.command-ring:hover::after {
+  opacity: 1;
+}
+
+.fade-mask {
+  mask-image: linear-gradient(to bottom, black 88%, transparent 100%);
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .badge-chip {
+    font-size: 0.66rem;
+    padding: 0.18rem 0.55rem;
+  }
+}
