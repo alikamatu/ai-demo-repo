@@ -1,98 +1,86 @@
-# Life OS
+# LifeOS Demo Repo
 
-An AI-powered workflow orchestration platform — plan, approve, and execute multi-step workflows with LLM intelligence.
-
-## Architecture
-
-```
-ai-demo-repo/
-├── apps/
-│   ├── api/          # FastAPI backend (Python 3.12+)
-│   ├── mobile/       # Expo / React Native mobile app
-│   └── worker/       # Background job processor (RQ)
-└── packages/
-    ├── llm-router/   # LLM provider abstraction (Python)
-    └── shared-types/ # TypeScript type contracts
-```
+This repo includes:
+- Web app (Next.js): `/Users/pro_coder/Documents/New project`
+- Mobile app (Expo): `/Users/pro_coder/Documents/New project/apps/mobile`
+- LLM orchestration with provider modes: `mock`, `openai`, `ollama`, `llamacpp`
+- Persisted auth users with hashed passwords in `.data/lifeos-users.json`
 
 ## Quick Start
 
-### Prerequisites
-
-- Python 3.12+
-- Node.js 20+
-- npm 10+
-
-### 1. Setup
-
+1. Install dependencies:
 ```bash
-# Clone & install everything
-make setup
-
-# Or manually:
-cd apps/api   && python -m venv .venv && . .venv/bin/activate && pip install -e ".[dev]"
-cd apps/mobile && npm install
+cd "/Users/pro_coder/Documents/New project"
+npm install
+cd "/Users/pro_coder/Documents/New project/apps/mobile"
+npm install
 ```
 
-### 2. Configure Environment
-
+2. Create env file:
 ```bash
-cp apps/api/.env.example apps/api/.env
-cp apps/mobile/.env.example apps/mobile/.env
+cd "/Users/pro_coder/Documents/New project"
+cp .env.example .env
+```
+`LIFEOS_STRICT_INTEGRATIONS=true` means upstream failures are surfaced as real errors (not fallback demo data).
+
+3. Start free local LLM (`llama.cpp`):
+```bash
+cd "/Users/pro_coder/Documents/New project"
+npm run llm:local
 ```
 
-### 3. Run
-
+4. In another terminal, start web:
 ```bash
-# Terminal 1 — API
-make api
-
-# Terminal 2 — Mobile
-make mobile
+cd "/Users/pro_coder/Documents/New project"
+npm run dev
 ```
 
-- **API docs**: http://localhost:8000/docs
-- **Health check**: http://localhost:8000/health
+5. In another terminal, start mobile:
+```bash
+cd "/Users/pro_coder/Documents/New project/apps/mobile"
+EXPO_PUBLIC_API_BASE_URL="http://localhost:3000" npm run start
+```
 
-## Development
+## Verification
 
-| Command          | Description                    |
-| ---------------- | ------------------------------ |
-| `make setup`     | Install all dependencies       |
-| `make api`       | Start FastAPI dev server       |
-| `make mobile`    | Start Expo dev server          |
-| `make test`      | Run all tests                  |
-| `make lint`      | Lint Python + TypeScript       |
-| `make clean`     | Remove generated files         |
+- Full stack verification:
+```bash
+cd "/Users/pro_coder/Documents/New project"
+npm run verify:all
+```
 
-## Project Structure
+- Local LLM end-to-end verification:
+```bash
+cd "/Users/pro_coder/Documents/New project"
+npm run verify:llm
+```
 
-### API (`apps/api`)
+Expected success output includes:
+- `provider: llamacpp`
+- `model: qwen2.5-0.5b-instruct-q4_k_m.gguf`
 
-Layered FastAPI application:
+## Health Endpoints
 
-- **`app/core/`** — Configuration, database, dependency injection
-- **`app/models/`** — SQLAlchemy ORM models
-- **`app/schemas/`** — Pydantic request/response schemas
-- **`app/routers/`** — HTTP route handlers
-- **`app/services/`** — Business logic layer
-- **`tests/`** — pytest test suite
+- Liveness: `GET /api/healthz`
+- Readiness: `GET /api/readyz`
+- LLM status (auth): `GET /api/lifeos/llm/status`
+- LLM mode switch (auth): `POST /api/lifeos/llm/mode` with `{ "mode": "mock|openai|ollama|llamacpp" }`
+- Auth register: `POST /api/auth/register` with `{ "name": "...", "email": "...", "password": "..." }`
 
-### Mobile (`apps/mobile`)
+`/api/readyz` now validates:
+- DB snapshot read
+- Active LLM provider connectivity (based on `LIFEOS_LLM_MODE`)
 
-Expo / React Native app with:
+## LLM Control UI
 
-- **`src/api/`** — Axios client + React Query hooks
-- **`src/screens/`** — App screens
-- **`src/navigation/`** — React Navigation stack
-- **`src/components/`** — Reusable UI components
-- **`src/store/`** — Zustand state management
-- **`src/theme/`** — Design tokens
+The dashboard includes an `AI Engine` panel for non-technical users:
+- shows current provider, model, and readiness
+- allows one-click switching between provider modes
+- refreshes provider health automatically
+- stores the selected mode per user in `.data/lifeos-db.json` so it survives restarts
 
-## Contributing
+## Strict Live Mode
 
-1. Create a feature branch from `main`
-2. Follow existing code patterns and naming conventions
-3. Add tests for new features
-4. Run `make lint && make test` before pushing
-5. Open a pull request with a clear description
+This repo now defaults to strict integration behavior:
+- Web client no longer fabricates successful action/approval/automation responses when API calls fail.
+- `/api/lifeos/live` returns upstream failure (`502`) when live data providers are unavailable and strict mode is enabled.
